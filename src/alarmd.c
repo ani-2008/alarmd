@@ -5,6 +5,16 @@
 #include <string.h>
 #include <syslog.h>
 
+int is_numeric(char *str)
+{
+    if(*str == '\0') return 0;
+    while(*str){
+        if(0 <= *str && *str <= 9) return 1;
+        str++;
+    }
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     // alarmd YYYY MM DD HH MM SS
@@ -12,6 +22,12 @@ int main(int argc, char *argv[])
     if(argc != 7){
         printf("USAGE: alaramd YYYY MM DD HH MM SS\n");
         exit(EXIT_FAILURE);
+    }
+    for(int i = 0; i < 7; i++){
+        if(!is_numeric(argv[i])){
+            fprintf(stderr, "ERROR: INVALID CHARACTER\n");
+            exit(EXIT_FAILURE);
+        }
     }
     
     char target_time[80];
