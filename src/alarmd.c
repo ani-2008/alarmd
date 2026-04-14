@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     
     if(alarm_time < now) { 
         
-        fprintf(stderr, "ERROR: DON'T GIVE INVALID INPUT YOU FILTHY LITTLE COCKROACH !!!\n");
+        fprintf(stderr, "ERROR: Target time must be in future !!\n");
         exit(EXIT_FAILURE);
     }
 
@@ -53,11 +53,7 @@ int main(int argc, char *argv[])
     while(1){
         time_t rawtime = time(NULL);
 
-        struct tm *info = localtime(&rawtime);
-
-        strftime(buffer, sizeof(buffer), "%Y %m %d %H %M %S",info);
- 
-        if(strcmp(target_time,buffer) == 0){
+        if(rawtime >= alarm_time){
             syslog(LOG_WARNING, "AlARM TRIGGERED!!");
             system(sound);
             break;
