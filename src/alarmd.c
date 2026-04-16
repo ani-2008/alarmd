@@ -1,10 +1,12 @@
+#define MINIAUDIO_IMPLEMENTATION
+#include "../includes/miniaudio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-#include <string.h>
 #include <syslog.h>
 #include <ctype.h>
+#include <math.h> 
 
 int is_numeric(char *str)
 {
@@ -19,7 +21,7 @@ int is_numeric(char *str)
 int main(int argc, char *argv[])
 {
     // alarmd YYYY MM DD HH MM SS
-    
+     
     if(argc != 7){
         printf("USAGE: alaramd YYYY MM DD HH MM SS\n");
         exit(EXIT_FAILURE);
@@ -30,7 +32,10 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
     }
-    
+    ma_engine engine;
+    if (ma_engine_init(NULL, &engine) != MA_SUCCESS){
+        fprintf(stderr, "Miniaudio failed to initialize\n");
+    }
     char target_time[80];
 
     snprintf(target_time, sizeof(target_time), "%s %s %s %s %s %s",
@@ -63,8 +68,7 @@ int main(int argc, char *argv[])
         perror("ERROR: DAEMON FAILED\n");
         exit(EXIT_FAILURE);
     } 
-     
-    char *sound = "/usr/bin/mpv --no-video --quiet /home/bitabyte/Desktop/alarm.wav &";
+    
     char buffer[80];
    
     while(1){
@@ -72,7 +76,7 @@ int main(int argc, char *argv[])
 
         if(rawtime >= alarm_time){
             syslog(LOG_WARNING, "AlARM TRIGGERED!!");
-            system(sound);
+            ma_engine_play_sound(&engine, "/usr/local/share/alarm.wav", NULL);
             break;
         }
     
@@ -80,6 +84,8 @@ int main(int argc, char *argv[])
     }
 
     syslog(LOG_WARNING, "ALARM DAEMON EXITING...");
+    ma_engine_uninit(&engine);
     
     closelog();
+    
 }
