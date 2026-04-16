@@ -68,9 +68,7 @@ int main(int argc, char *argv[])
         perror("ERROR: DAEMON FAILED\n");
         exit(EXIT_FAILURE);
     } 
-    
-    char buffer[80];
-   
+     
     while(1){
         time_t rawtime = time(NULL);
 
