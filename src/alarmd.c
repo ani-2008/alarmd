@@ -8,6 +8,8 @@
 #include <ctype.h>
 #include <math.h> 
 
+#define ALARM_ASSET_PATH "/usr/local/share/alarmd/alarm.wav"
+
 int is_numeric(char *str)
 {
     if(*str == '\0') return 0;
@@ -35,6 +37,7 @@ int main(int argc, char *argv[])
     ma_engine engine;
     if (ma_engine_init(NULL, &engine) != MA_SUCCESS){
         fprintf(stderr, "Miniaudio failed to initialize\n");
+        exit(EXIT_FAILURE);
     }
     char target_time[80];
 
@@ -64,17 +67,13 @@ int main(int argc, char *argv[])
     
     syslog(LOG_INFO, "Alarm daemon started for %s", target_time);
 
-    if(daemon(0,0) == -1){
-        perror("ERROR: DAEMON FAILED\n");
-        exit(EXIT_FAILURE);
-    } 
-     
     while(1){
         time_t rawtime = time(NULL);
 
         if(rawtime >= alarm_time){
             syslog(LOG_WARNING, "AlARM TRIGGERED!!");
-            ma_engine_play_sound(&engine, "/usr/local/share/alarm.wav", NULL);
+            ma_engine_play_sound(&engine, ALARM_ASSET_PATH, NULL);
+            sleep(10);
             break;
         }
     
