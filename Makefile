@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -Wextra
 LIBS = -lm -lpthread
 TARGET = alarmd
 SRC = src/alarmd.c
